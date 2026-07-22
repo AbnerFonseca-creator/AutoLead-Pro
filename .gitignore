@@ -1,0 +1,11 @@
+# Variáveis de ambiente (Senhas)
+*.env
+
+# Cache do Python e do Mapa
+__pycache__/
+mapa_cache_autolead.db
+
+# Pastas e arquivos temporários
+Logs_Sessao_AutoLead/
+*.xlsx
+*.docx
