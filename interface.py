@@ -2,6 +2,7 @@ import webbrowser
 import customtkinter as ctk
 import tkintermapview
 from tkinter import messagebox
+from gerenciador_configs import GerenciadorConfigs
 import threading
 import core
 import animações
@@ -28,6 +29,13 @@ class InterfaceApp(ctk.CTk):
         
         # Inicia o módulo de segurança importado
         self.seguranca = GerenciadorDeLogs()
+
+        # Inicia o Cofre de Criptografia e puxa os dados salvos
+        self.cofre = GerenciadorConfigs()
+        configs_salvas = self.cofre.carregar_configs()
+        
+        self.webhook_url = configs_salvas.get("webhook_url", "")
+        self.api_key_salva = configs_salvas.get("api_key", "")
         
         # Detecta quando o usuário clica no X para fechar e limpa tudo
         self.protocol("WM_DELETE_WINDOW", self.fechar_aplicativo)
@@ -35,7 +43,11 @@ class InterfaceApp(ctk.CTk):
         self.construir_design()
 
     def fechar_aplicativo(self):
-        """Aciona o módulo de segurança para apagar logs e fecha a tela."""
+        """Salva as configurações criptografadas, apaga logs e fecha a tela."""
+        # Salva a Chave da API e o Webhook no cofre antes de fechar
+        chave_atual = self.entry_api.get()
+        self.cofre.salvar_configs(chave_atual, self.webhook_url)
+        
         self.seguranca.encerrar_seguro()
         self.destroy()
 
@@ -74,6 +86,13 @@ class InterfaceApp(ctk.CTk):
         # O parâmetro show="*" esconde a chave como se fosse uma senha!
         self.entry_api = ctk.CTkEntry(self.sidebar_frame, placeholder_text="Cole sua API Key aqui...", show="*")
         self.entry_api.grid(row=8, column=0, padx=20, pady=5, sticky="ew")
+        
+        self.entry_api = ctk.CTkEntry(self.sidebar_frame, placeholder_text="Cole sua API Key aqui...", show="*")
+        self.entry_api.grid(row=8, column=0, padx=20, pady=5, sticky="ew")
+        
+        # PREENCHE A CHAVE AUTOMATICAMENTE SE ELA EXISTIR NO COFRE
+        if self.api_key_salva:
+            self.entry_api.insert(0, self.api_key_salva)
         
         # Criação do Link Clicável
         self.link_api = ctk.CTkLabel(self.sidebar_frame, text="🔗 Clique aqui para pegar sua chave", text_color="#00FFcc", cursor="hand2", font=ctk.CTkFont(size=12, underline=True))

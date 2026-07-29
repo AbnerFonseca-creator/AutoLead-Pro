@@ -9,3 +9,12 @@ mapa_cache_autolead.db
 Logs_Sessao_AutoLead/
 *.xlsx
 *.docx
+
+# Ignorar Chaves de Criptografia e Configurações Salvas
+*.key
+*.enc
+
+# Ignorar arquivos do PyInstaller
+build/
+dist/
+*.spec
